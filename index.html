@@ -50,6 +50,9 @@
   }
 
   button{
+    flex: 1 1 45%; /* responsive width */
+    min-width:120px;
+    max-width:200px;
     border:none;
     padding:14px 22px;
     border-radius:14px;
@@ -128,8 +131,14 @@
     min-height:60px;
   }
 
+  /* MOBILE ADJUSTMENTS */
   @media(max-width:500px){
-    button{width:45%;}
+    .buttons{
+      gap:10px;
+    }
+    button{
+      flex: 1 1 48%;
+    }
   }
 </style>
 </head>
@@ -155,7 +164,6 @@
 <!-- Sounds -->
 <audio id="popSound" src="https://assets.mixkit.co/sfx/preview/mixkit-bonus-earned-in-video-game-2058.mp3"></audio>
 <audio id="yesSound" src="Yippee Sound Effect.mp3"></audio>
-
 
 <script>
 let noClicks = 0;
@@ -199,18 +207,24 @@ noBtn.addEventListener('click', () => {
   if(noClicks >= desperateMessages.length){
     shatterNoButton();
     growYesButton();
-    startYesHearts(); // start pulsing hearts around YES
+    startYesHearts();
   } else {
-    const offsetX = (Math.random() - 0.5) * 120;
-    const offsetY = (Math.random() - 0.5) * 50;
-    noBtn.style.transform = `translate(${offsetX}px, ${offsetY}px) rotate(${Math.random()*20-10}deg)`;
+    // Keep NO button inside screen
+    const rect = noBtn.getBoundingClientRect();
+    const maxX = window.innerWidth - rect.width;
+    const maxY = window.innerHeight - rect.height;
+    const offsetX = Math.random() * 120 - 60;
+    const offsetY = Math.random() * 50 - 25;
+    const newX = Math.min(Math.max(noBtn.offsetLeft + offsetX, 0), maxX);
+    const newY = Math.min(Math.max(noBtn.offsetTop + offsetY, 0), maxY);
+    noBtn.style.transform = `translate(${newX - noBtn.offsetLeft}px, ${newY - noBtn.offsetTop}px) rotate(${Math.random()*20-10}deg)`;
   }
 });
 
 // YES button click
 yesBtn.addEventListener('click', () => {
   modal.classList.add('show');
-  typeText("iloveyousomuch babyy. Even from afar, you make my heart full. Thankyou for giving me so much love and care. Let's celebrate together video call, cuddles, and movie night. ilvoeyouu with all my heart im all yours now and forever!! ₍₍⚞(˶ˆᗜˆ˵)⚟⁾⁾ 💕", typing, 30);
+  typeText("iloveyousomuch babyy. Even from afar, you make my heart full. Thank you for giving me so much love and care. Let's celebrate together video call, cuddles, and movie night. iloveyouu with all my heart, I'm all yours now and forever!! ₍₍⚞(˶ˆᗜˆ˵)⚟⁾⁾ 💕", typing, 30);
   burstHearts();
   popSound.play();
   yesSound.play();
