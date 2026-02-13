@@ -41,29 +41,27 @@
   p{color:var(--text); font-size:15px;}
 
   .buttons{
-    margin-top:20px;
-    display:flex;
-    justify-content:center;
-    gap:15px;
-    flex-wrap:wrap;
-    position:relative;
-  }
+  margin-top:20px;
+  display:flex;
+  justify-content:center;
+  gap:12px;
+  flex-wrap:wrap;
+}
 
-  button{
-    flex: 1 1 45%; /* responsive width */
-    min-width:120px;
-    max-width:200px;
-    border:none;
-    padding:14px 22px;
-    border-radius:14px;
-    font-size:15px;
-    font-weight:bold;
-    cursor:pointer;
-    transition:all .3s ease;
-    touch-action:manipulation;
-    z-index:3;
-    position:relative;
-  }
+button{
+  flex:1 1 100%;
+  max-width:220px;
+  padding:14px 18px;
+  border-radius:14px;
+  font-size:14px;
+  font-weight:bold;
+  cursor:pointer;
+  transition:all .3s ease;
+  white-space:nowrap;        /* prevents ugly text breaking */
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
 
   .yes{
     background:linear-gradient(180deg,var(--pink),var(--deep-red));
@@ -131,15 +129,19 @@
     min-height:60px;
   }
 
-  /* MOBILE ADJUSTMENTS */
-  @media(max-width:500px){
-    .buttons{
-      gap:10px;
-    }
-    button{
-      flex: 1 1 48%;
-    }
+  @media(max-width:480px){
+  .buttons{
+    flex-direction:column;   /* stack buttons */
+    align-items:center;
   }
+
+  button{
+    width:100%;
+    max-width:100%;
+    font-size:13px;
+  }
+}
+
 </style>
 </head>
 <body>
