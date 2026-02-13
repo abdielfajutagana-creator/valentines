@@ -1,0 +1,297 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Valentines ⋆𐙚₊˚⊹♡</title>
+<style>
+  :root{
+    --white:#ffffff;
+    --soft-pink:#ffe6f0;
+    --pink:#ff6f91;
+    --deep-red:#ff2e63;
+    --text:#3a1f2b;
+  }
+
+  *{box-sizing:border-box;}
+  html,body{margin:0;height:100%;font-family:'Segoe UI',sans-serif;}
+  body{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:linear-gradient(135deg,var(--white),var(--soft-pink));
+    overflow:hidden;
+    padding:20px;
+    position:relative;
+  }
+
+  .card{
+    background:var(--white);
+    width:100%;
+    max-width:500px;
+    padding:25px;
+    border-radius:20px;
+    text-align:center;
+    box-shadow:0 15px 40px rgba(255,46,99,0.15);
+    position:relative;
+    z-index:2;
+  }
+
+  h1{color:var(--deep-red); margin-bottom:10px;}
+  p{color:var(--text); font-size:15px;}
+
+  .buttons{
+    margin-top:20px;
+    display:flex;
+    justify-content:center;
+    gap:15px;
+    flex-wrap:wrap;
+    position:relative;
+  }
+
+  button{
+    border:none;
+    padding:14px 22px;
+    border-radius:14px;
+    font-size:15px;
+    font-weight:bold;
+    cursor:pointer;
+    transition:all .3s ease;
+    touch-action:manipulation;
+    z-index:3;
+    position:relative;
+  }
+
+  .yes{
+    background:linear-gradient(180deg,var(--pink),var(--deep-red));
+    color:white;
+  }
+
+  .no{
+    background:transparent;
+    border:2px solid var(--pink);
+    color:var(--deep-red);
+    position:relative;
+  }
+
+  .heart{
+    position:absolute;
+    font-size:20px;
+    animation:float 6s linear forwards;
+    opacity:0;
+    pointer-events:none;
+  }
+
+  @keyframes float{
+    0%{transform:translateY(0) scale(.5);opacity:0;}
+    20%{opacity:1;}
+    100%{transform:translateY(-120vh) scale(1.2);opacity:0;}
+  }
+
+  .modal{
+    position:fixed;
+    inset:0;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:rgba(0,0,0,0.3);
+    backdrop-filter:blur(3px);
+    opacity:0;
+    visibility:hidden;
+    transition:.3s;
+    z-index:5;
+  }
+
+  .modal.show{
+    opacity:1;
+    visibility:visible;
+  }
+
+  .modal-box{
+    background:white;
+    padding:25px;
+    border-radius:18px;
+    text-align:center;
+    max-width:400px;
+    box-shadow:0 15px 40px rgba(0,0,0,0.2);
+    animation:pop .4s ease;
+  }
+
+  @keyframes pop{
+    from{transform:scale(.7);opacity:0;}
+    to{transform:scale(1);opacity:1;}
+  }
+
+  .typing{
+    font-weight:bold;
+    color:var(--deep-red);
+    min-height:60px;
+  }
+
+  @media(max-width:500px){
+    button{width:45%;}
+  }
+</style>
+</head>
+<body>
+
+<div class="card">
+  <h1>Hi Baby (˶ˆ꒳ˆ˵)</h1>
+  <p id="question">Even though we’re miles apart… will you still be my Valentine this year? (♡ˊ͈ ꒳ ˋ͈)</p>
+
+  <div class="buttons">
+    <button class="yes" id="yesBtn">YES BABY ₍^ >⩊< ^₎Ⳋ</button>
+    <button class="no" id="noBtn">No o(╥﹏╥)o</button>
+  </div>
+</div>
+
+<div class="modal" id="modal">
+  <div class="modal-box">
+    <div class="typing" id="typing"></div>
+    <button onclick="closeModal()" style="margin-top:15px;background:var(--pink);color:white;border:none;padding:10px 16px;border-radius:10px;">Close 💖</button>
+  </div>
+</div>
+
+<!-- Sounds -->
+<audio id="popSound" src="https://assets.mixkit.co/sfx/preview/mixkit-bonus-earned-in-video-game-2058.mp3"></audio>
+<audio id="yesSound" src="Yippee Sound Effect.mp3"></audio>
+
+
+<script>
+let noClicks = 0;
+const yesBtn = document.getElementById('yesBtn');
+const noBtn = document.getElementById('noBtn');
+const question = document.getElementById('question');
+const modal = document.getElementById('modal');
+const typing = document.getElementById('typing');
+const popSound = document.getElementById('popSound');
+const yesSound = document.getElementById('yesSound');
+
+const desperateMessages = [
+  "Baby why no? (•́ ᴖ •̀)",
+  "Are you sure baby?? (ó﹏ò｡)",
+  "Beam will cry... (ᗒᗣᗕ)՞",
+  "Please baby .·°՞(っ-ᯅ-ς)՞°·.",
+  "You're my forever Valentine (つ╥﹏╥)つ",
+  "Okay now I'm desperate... PLEASE BABY .·°(T^T)՞°·."
+];
+
+// Continuous background hearts
+function createBackgroundHeart(){
+  const heart = document.createElement('div');
+  heart.className='heart';
+  heart.innerHTML="💗";
+  heart.style.left=Math.random()*100+'%';
+  heart.style.bottom='0';
+  heart.style.fontSize=(10+Math.random()*20)+'px';
+  document.body.appendChild(heart);
+  setTimeout(()=>heart.remove(),6000);
+}
+setInterval(createBackgroundHeart, 400);
+
+// NO button click
+noBtn.addEventListener('click', () => {
+  noClicks++;
+  question.textContent = desperateMessages[Math.min(noClicks-1, desperateMessages.length-1)];
+  popSound.play();
+  createClickHeart();
+
+  if(noClicks >= desperateMessages.length){
+    shatterNoButton();
+    growYesButton();
+    startYesHearts(); // start pulsing hearts around YES
+  } else {
+    const offsetX = (Math.random() - 0.5) * 120;
+    const offsetY = (Math.random() - 0.5) * 50;
+    noBtn.style.transform = `translate(${offsetX}px, ${offsetY}px) rotate(${Math.random()*20-10}deg)`;
+  }
+});
+
+// YES button click
+yesBtn.addEventListener('click', () => {
+  modal.classList.add('show');
+  typeText("iloveyousomuch babyy. Even from afar, you make my heart full. Thankyou for giving me so much love and care. Let's celebrate together video call, cuddles, and movie night. ilvoeyouu with all my heart im all yours now and forever!! ₍₍⚞(˶ˆᗜˆ˵)⚟⁾⁾ 💕", typing, 30);
+  burstHearts();
+  popSound.play();
+  yesSound.play();
+});
+
+// Typing effect
+function typeText(text, element, speed){
+  element.textContent="";
+  let i=0;
+  let interval=setInterval(()=>{
+    element.textContent+=text[i];
+    i++;
+    if(i>=text.length) clearInterval(interval);
+  },speed);
+}
+
+// Heart for clicks
+function createClickHeart(){
+  const heart=document.createElement('div');
+  heart.className='heart';
+  heart.innerHTML="💗";
+  heart.style.left=Math.random()*100+'%';
+  heart.style.bottom='0';
+  document.body.appendChild(heart);
+  setTimeout(()=>heart.remove(),4000);
+}
+
+// Burst of hearts for YES
+function burstHearts(){
+  for(let i=0;i<25;i++){
+    setTimeout(createClickHeart,i*80);
+  }
+}
+
+// Close modal
+function closeModal(){ modal.classList.remove('show'); }
+
+// Shatter NO button
+function shatterNoButton(){
+  const rect = noBtn.getBoundingClientRect();
+  for(let i=0;i<8;i++){
+    const piece = document.createElement('div');
+    piece.innerHTML='💖';
+    piece.style.position='fixed';
+    piece.style.left=rect.left + Math.random()*rect.width + 'px';
+    piece.style.top=rect.top + Math.random()*rect.height + 'px';
+    piece.style.fontSize='12px';
+    piece.style.transition='all 1s ease-out';
+    document.body.appendChild(piece);
+    setTimeout(()=>{
+      piece.style.transform=`translate(${(Math.random()-0.5)*200}px, ${(Math.random()-0.5)*200}px) rotate(${Math.random()*360}deg)`;
+      piece.style.opacity='0';
+    },50);
+    setTimeout(()=>piece.remove(),1100);
+  }
+  noBtn.remove();
+}
+
+// Grow YES button to fill space
+function growYesButton(){
+  yesBtn.style.transition='all 0.5s ease';
+  yesBtn.style.width='70%';
+  yesBtn.style.padding='18px 28px';
+}
+
+// Pulsing hearts around YES
+let yesHeartInterval;
+function startYesHearts(){
+  yesHeartInterval = setInterval(()=>{
+    const rect = yesBtn.getBoundingClientRect();
+    const heart = document.createElement('div');
+    heart.className='heart';
+    heart.innerHTML='💖';
+    heart.style.left = rect.left + Math.random()*rect.width + 'px';
+    heart.style.top = rect.top + Math.random()*rect.height + 'px';
+    heart.style.fontSize = (12 + Math.random()*18) + 'px';
+    document.body.appendChild(heart);
+    setTimeout(()=>heart.remove(),4000);
+  }, 300);
+}
+</script>
+
+</body>
+</html>
